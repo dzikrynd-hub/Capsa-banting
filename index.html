@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Capsa Banting - Big Two Online</title>
+    <meta name="description" content="Capsa Banting (Big Two) - Main kartu online bersama teman atau bot!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
+</head>
+
+<body>
+    <!-- ============ LOBBY SCREEN ============ -->
+    <div id="lobby-screen">
+        <div class="lobby-bg-particles" id="bg-particles"></div>
+        <div class="lobby-container">
+            <div class="lobby-header">
+                <div class="logo-icon">♠♥♦♣</div>
+                <h1>Capsa Banting</h1>
+                <p class="lobby-subtitle">Big Two Online Card Game</p>
+            </div>
+
+            <!-- Main Menu -->
+            <div id="lobby-menu" class="lobby-section">
+                <div class="lobby-buttons">
+                    <button class="btn btn-primary btn-large" id="btn-host-bot">
+                        <span class="btn-icon">🤖</span>
+                        <span class="btn-text">Play with Bot</span>
+                        <span class="btn-desc">Latihan melawan AI</span>
+                    </button>
+                    <button class="btn btn-accent btn-large" id="btn-host">
+                        <span class="btn-icon">🎪</span>
+                        <span class="btn-text">Host Game</span>
+                        <span class="btn-desc">Buat room multiplayer</span>
+                    </button>
+                    <button class="btn btn-success btn-large" id="btn-join">
+                        <span class="btn-icon">🚪</span>
+                        <span class="btn-text">Join Game</span>
+                        <span class="btn-desc">Gabung room teman</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bot Mode Section -->
+            <div id="bot-section" class="lobby-section hidden">
+                <h2 class="section-title">🤖 Play with Bot</h2>
+                <div class="name-input-group">
+                    <label for="bot-player-name">Nama Kamu</label>
+                    <input type="text" id="bot-player-name" placeholder="Masukkan nama..." maxlength="12" autocomplete="off">
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="joker-toggle-bot">
+                        <span class="toggle-switch"></span>
+                        <span>🃏 Mode Joker (14 kartu)</span>
+                    </label>
+                </div>
+                <div class="lobby-buttons">
+                    <button class="btn btn-primary" id="btn-bot-confirm">🎮 Mulai Main</button>
+                    <button class="btn btn-ghost" id="btn-bot-cancel">← Kembali</button>
+                </div>
+            </div>
+
+            <!-- Host Game Section -->
+            <div id="host-section" class="lobby-section hidden">
+                <h2 class="section-title">🎪 Host Game</h2>
+                <div class="name-input-group">
+                    <label for="host-player-name">Nama Kamu</label>
+                    <input type="text" id="host-player-name" placeholder="Masukkan nama..." maxlength="12" autocomplete="off">
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="joker-toggle-host">
+                        <span class="toggle-switch"></span>
+                        <span>🃏 Mode Joker (14 kartu)</span>
+                    </label>
+                </div>
+                <div class="lobby-buttons">
+                    <button class="btn btn-primary" id="btn-host-confirm">🎪 Buat Room</button>
+                    <button class="btn btn-ghost" id="btn-host-cancel">← Kembali</button>
+                </div>
+            </div>
+
+            <!-- Join Input -->
+            <div id="join-section" class="lobby-section hidden">
+                <h2 class="section-title">🚪 Join Game</h2>
+                <div class="name-input-group">
+                    <label for="join-player-name">Nama Kamu</label>
+                    <input type="text" id="join-player-name" placeholder="Masukkan nama..." maxlength="12" autocomplete="off">
+                </div>
+                <div class="name-input-group" style="margin-top: 12px;">
+                    <label for="room-code-input">Kode Room</label>
+                    <input type="text" id="room-code-input" placeholder="XXXXXX" maxlength="8" autocomplete="off"
+                        style="text-transform: uppercase; text-align: center; font-size: 1.4rem; letter-spacing: 3px;">
+                </div>
+                <div class="lobby-buttons">
+                    <button class="btn btn-success" id="btn-join-confirm">✅ Gabung</button>
+                    <button class="btn btn-ghost" id="btn-join-cancel">← Kembali</button>
+                </div>
+            </div>
+
+            <!-- Waiting Room -->
+            <div id="waiting-room" class="lobby-section hidden">
+                <div class="room-code-display">
+                    <span class="room-code-label">Kode Room</span>
+                    <span class="room-code" id="display-room-code">CB-XXXX</span>
+                    <button class="btn btn-small btn-ghost" id="btn-copy-code" title="Copy">📋</button>
+                </div>
+                <div class="players-list" id="players-list"></div>
+                <div class="waiting-status" id="waiting-status">Menunggu pemain... (1/4)</div>
+                <div class="lobby-buttons">
+                    <button class="btn btn-primary btn-large hidden" id="btn-start-game">🎮 Mulai Game</button>
+                    <button class="btn btn-ghost" id="btn-leave-room">🚪 Keluar Room</button>
+                </div>
+            </div>
+
+            <!-- Rules -->
+            <div class="lobby-rules">
+                <h3>📜 Aturan Capsa Banting</h3>
+                <ul>
+                    <li>4 pemain, masing-masing 13 kartu (14 jika mode Joker)</li>
+                    <li>Pemegang 3♦ mulai duluan</li>
+                    <li>Kombinasi: Single, Pair, Three of a Kind, atau 5-kartu</li>
+                    <li>5-kartu: Straight, Flush, Full House, Four of a Kind, Straight Flush, Royal Flush</li>
+                    <li><strong>BOMB:</strong> Angka 2 tunggal bisa dilawan dengan Four of a Kind, Straight Flush, atau Royal Flush!</li>
+                    <li>Pemain pertama habis kartunya = Pemenang! 🏆</li>
+                </ul>
+            </div>
+
+            <div class="lobby-copyright">
+                © 2026 Capsa Banting Online. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ GAME TABLE ============ -->
+    <div id="game-container" class="hidden">
+        <!-- HEADER -->
+        <div id="game-header">
+            <div class="header-title">
+                <h1>♠ Capsa Banting</h1>
+            </div>
+            <div class="header-info">
+                <span class="turn-indicator" id="turn-indicator">Menunggu...</span>
+                <span class="joker-badge hidden" id="joker-mode-badge">🃏 JOKER</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-icon" id="btn-rules" title="Aturan">📖</button>
+                <button class="btn btn-icon" id="btn-quit-game" title="Keluar">🚪</button>
+            </div>
+        </div>
+
+        <!-- GAME BODY -->
+        <div id="game-body">
+            <!-- Top Opponent -->
+            <div class="opponent-zone" id="opponent-top">
+                <div class="opponent-info">
+                    <span class="opponent-name">Bot 2</span>
+                    <span class="opponent-card-count">13</span>
+                </div>
+                <div class="opponent-cards"></div>
+                <div class="opponent-last-play"></div>
+            </div>
+
+            <!-- Left Opponent -->
+            <div class="opponent-zone" id="opponent-left">
+                <div class="opponent-info">
+                    <span class="opponent-name">Bot 1</span>
+                    <span class="opponent-card-count">13</span>
+                </div>
+                <div class="opponent-cards"></div>
+                <div class="opponent-last-play"></div>
+            </div>
+
+            <!-- Center: Play Area -->
+            <div id="center-area">
+                <div id="play-area">
+                    <div class="play-area-label" id="play-area-label">Mulai Permainan</div>
+                    <div id="played-cards"></div>
+                </div>
+                <div id="game-log"></div>
+            </div>
+
+            <!-- Right Opponent -->
+            <div class="opponent-zone" id="opponent-right">
+                <div class="opponent-info">
+                    <span class="opponent-name">Bot 3</span>
+                    <span class="opponent-card-count">13</span>
+                </div>
+                <div class="opponent-cards"></div>
+                <div class="opponent-last-play"></div>
+            </div>
+
+            <!-- Bottom: Player Zone -->
+            <div id="player-zone">
+                <div id="player-info">
+                    <span class="player-name" id="my-name">Kamu</span>
+                    <span class="card-count-badge" id="my-card-count">13</span>
+                </div>
+                <div id="player-hand"></div>
+                <div id="player-actions">
+                    <button class="btn btn-success" id="btn-play" disabled>▶ Main</button>
+                    <button class="btn btn-warning" id="btn-pass">⏭ Pass</button>
+                    <button class="btn btn-ghost btn-small" id="btn-sort">🔄 Sort</button>
+                    <div id="combo-hint" class="combo-hint"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ GAME OVER MODAL ============ -->
+    <div class="modal-overlay hidden" id="gameover-modal">
+        <div class="modal">
+            <div class="modal-crown">🏆</div>
+            <h2 id="winner-name">Game Over!</h2>
+            <div class="score-list" id="score-list"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary btn-large" id="btn-play-again">🔁 Main Lagi</button>
+                <button class="btn btn-ghost" id="btn-back-lobby">🏠 Lobby</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ RULES MODAL ============ -->
+    <div class="modal-overlay hidden" id="rules-modal">
+        <div class="modal modal-large">
+            <h2>📖 Aturan Capsa Banting</h2>
+            <div class="rules-content">
+                <div class="rules-section">
+                    <h3>🎴 Urutan Kartu</h3>
+                    <p>3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → J → Q → K → A → 2</p>
+                    <p>Suit: ♦ → ♣ → ♥ → ♠</p>
+                </div>
+                <div class="rules-section">
+                    <h3>📦 Kombinasi</h3>
+                    <ul>
+                        <li><strong>Single:</strong> 1 kartu</li>
+                        <li><strong>Pair:</strong> 2 kartu sama</li>
+                        <li><strong>Three of a Kind:</strong> 3 kartu sama</li>
+                        <li><strong>Straight:</strong> 5 kartu berurutan (beda suit OK)</li>
+                        <li><strong>Flush:</strong> 5 kartu suit sama</li>
+                        <li><strong>Full House:</strong> Three + Pair</li>
+                        <li><strong>Four of a Kind:</strong> 4 kartu sama + 1 kicker</li>
+                        <li><strong>Straight Flush:</strong> Straight + Flush</li>
+                        <li><strong>Royal Flush:</strong> 10-J-Q-K-A suit sama</li>
+                    </ul>
+                </div>
+                <div class="rules-section">
+                    <h3>💣 Aturan Bomb</h3>
+                    <p>Kartu <strong>2 tunggal</strong> bisa dilawan dengan:</p>
+                    <ul>
+                        <li>Four of a Kind (+ kicker)</li>
+                        <li>Straight Flush</li>
+                        <li>Royal Flush</li>
+                    </ul>
+                    <p>Bomb bisa dilawan bomb yang lebih kuat!</p>
+                </div>
+                <div class="rules-section">
+                    <h3>🃏 Mode Joker</h3>
+                    <p>4 Joker: 2 Joker Warna (🔴🔵) + 2 Joker Monokrom (⚫⚪)</p>
+                    <ul>
+                        <li>Joker adalah kartu anomali yang melengkapi kombo apapun</li>
+                        <li>Kombo dengan Joker TIDAK bisa jadi bomb</li>
+                        <li>Tunggal: Joker lebih tinggi dari 2, bisa di-bomb</li>
+                        <li>Joker Monokrom dilawan Joker Warna</li>
+                        <li>Joker Warna tunggal harus di-bomb murni atau skip</li>
+                        <li>Pair Joker Monokrom < Pair Joker Campur < Pair Joker Warna (MUTLAK)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btn-rules-close" style="width:100%">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TOAST CONTAINER ============ -->
+    <div id="toast-container"></div>
+
+    <script src="cards.js"></script>
+    <script src="engine.js"></script>
+    <script src="bot.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
